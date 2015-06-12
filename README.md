@@ -1,5 +1,11 @@
 # reag
-Reaggregation process for translating historical data to current boundaries.
+Reaggregation tool for translating historical data to current boundaries.
+
+Reag will use data for counties whose boundaries have not changed
+directly.  For all other counties, it will determine the geometric
+intersection between year 2000 county boundaries and historical
+boundaries, and compute estimated values from each historical county
+contribution.
 
 ## Installation
 
