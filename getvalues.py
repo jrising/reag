@@ -1,3 +1,8 @@
+################################################################################
+# getvalues - Construct a CSV-formatted list of values for all present-day
+#   regions, using a historical shapefile and historical values file.
+################################################################################
+
 import sys, csv
 import shapefile
 import shapelogic
