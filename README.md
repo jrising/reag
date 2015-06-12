@@ -1,13 +1,13 @@
 # reag
 Reaggregation process for translating historical data to current boundaries.
 
-== Installation
+## Installation
 
 Reag uses Python 2.6+, pyshp, and shapely.
 
 Follow the instructions on https://github.com/GeospatialPython/pyshp and http://toblerity.org/shapely/project.html#installation to install these dependencies.
 
-== Use
+## Use
 
 ```
 python getvalues.py <historical-shapefile> <values-csv> <values-column> <type>
