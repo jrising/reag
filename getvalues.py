@@ -13,6 +13,7 @@ if len(sys.argv) < 5:
     print "  <type> may be SUM or AVG"
     exit()
 
+# Collect the arguments
 historical_filename = sys.argv[1] # "nhgis0005_shapefile_tl2000_us_county_1950/US_county_1950"
 values_filename = sys.argv[2] # "nhgis0001_ts_1950_county.csv"
 column = sys.argv[3] # "A00AA1950"
@@ -22,6 +23,7 @@ if column_type not in ['sum', 'avg']:
     print "Please specify a valid type."
     exit()
 
+# Open shapefiles
 year2000 = shapefile.Reader("year2000/US_county_2000")
 year2000_header = map(lambda f: f[0], year2000.fields)[1:]
 year2000_records = year2000.records()
@@ -30,6 +32,7 @@ historic = shapefile.Reader(historical_filename)
 historic_header = map(lambda f: f[0], historic.fields)[1:]
 historic_records = historic.records()
 
+# Construct an index of the county indexes for given FIPS in each shapefile
 index = {} # {FIPS: (year2000, historic)}
 for ii in range(len(year2000_records)):
     record = year2000_records[ii]
@@ -55,11 +58,14 @@ with open(values_filename, 'r') as fp:
     header = reader.next()
     print "FIPS,State,County,Value"
     for row in reader:
+        # Construct the FIPS
         fips = row[header.index('STATEA')][0:-1] + row[header.index('COUNTYA')][0:-1]
         if fips in index:
             year2000_ii, historic_ii = index[fips]
+            # Check if these two shapes are identical
             if year2000_ii is not None and historic_ii is not None:
                 if year2000.shape(year2000_ii).points == historic.shape(historic_ii).points:
+                    # Output a direct match
                     state = row[header.index('STATE')]
                     county = row[header.index('COUNTY')]
                     value = row[header.index(column)]
@@ -82,14 +88,17 @@ for fips in index:
     denom = 0.0
     historic_ii = 0
     for shape in historic.iterShapes():
+        # Find all shapes that might intersect
         gisjoin = historic_records[historic_ii][historic_header.index('GISJOIN')]
         if gisjoin in values and shapelogic.box_intersects(year2000_shape.bbox, shape.bbox):
+            # Determine the overlapping area
             historic_polygon = shapelogic.shape2multi(shape).buffer(0)
             intersection = year2000_polygon.intersection(historic_polygon)
             total += values[gisjoin] * intersection.area / historic_polygon.area
             denom += intersection.area / historic_polygon.area
         historic_ii += 1
 
+    # Construct the final output
     state = year2000_records[year2000_ii][year2000_header.index('STATENAM')]
     county = year2000_records[year2000_ii][year2000_header.index('ICPSRNAM')]
     if column_type == 'sum':
