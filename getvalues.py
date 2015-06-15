@@ -53,7 +53,7 @@ values = {} # {GISJOIN: value}
 with open(values_filename, 'r') as fp:
     reader = csv.reader(fp)
     header = reader.next()
-    print ','.join(header)
+    print "FIPS,State,County,Value"
     for row in reader:
         fips = row[header.index('STATEA')][0:-1] + row[header.index('COUNTYA')][0:-1]
         if fips in index:
