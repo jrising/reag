@@ -74,7 +74,10 @@ with open(values_filename, 'r') as fp:
                     continue
 
         # We couldn't find an exact match
-        values[row[header.index('GISJOIN')]] = float(row[header.index(column)])
+        try:
+            values[row[header.index('GISJOIN')]] = float(row[header.index(column)])
+        except:
+            pass # If invalid data (e.g., blank), just leave it out!
 
 # Iterate through remaining
 for fips in index:
